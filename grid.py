@@ -69,12 +69,6 @@ class Grid:
         return arr
 
     def csv_to_grid(self):
-        """with open(self.csv_file, 'r') as csv_file:
-            csv_reader = csv.reader(csv_file)
-            
-            for line in csv_reader:
-                if self.grid_list[line[1] + self.increment_y] is None: """
-        
         for line in self.csv_list:
             self.grid_list[(line[1] + self.increment_y) * -1 - 1][line[0] + self.increment_x] = Grid.CHAR_DICT[line[2]]
     
