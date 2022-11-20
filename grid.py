@@ -1,19 +1,31 @@
 import csv
+from tile import *
 
 class Grid:
 
-    CHAR_DICT = {0:".", 1:"_", 2:"^", 3:"#", 4:"+"}
+    # <======== GUIDE ========>
+    """
+        0 -> NORMAL     -> .
+        1 -> OBSTACLE   -> _
+        2 -> PICK UP    -> ^
+        3 -> DROP OFF   -> #
+        4 -> SPAWNING   -> +
+    """
 
-    def __init__(self, file_name: csv):
+    def __init__(self, file_name: csv) -> None:
         self.csv_file = file_name
         self.csv_list = self.csv_to_list()
-        self.x_min = self.get_x_min()
-        self.y_min = self.get_y_min()
-        self.increment_x = 0 if self.x_min > 0 else abs(self.x_min)
-        self.increment_y = 0 if self.y_min > 0 else abs(self.y_min)
+        self.increment_x = self.get_increment_x()
+        self.increment_y = self.get_increment_y()
         self.grid_list = self.initialise_empty_grid()
+
+        # Convert csv to grid
+        self.csv_to_grid()
     
-    def csv_to_list(self):
+    def csv_to_list(self) -> list:
+        """
+        Convert csv file into an array of arrays containing int values
+        """
         with open(self.csv_file, 'r') as csv_file:
             csv_reader = list(csv.reader(csv_file))
             csv_list = []
@@ -22,6 +34,9 @@ class Grid:
             return csv_list
     
     def get_x_range(self) -> int:
+        """
+        Returns the range of x values
+        """
         max = self.csv_list[0][0]
         min = self.csv_list[0][0]
         for line in self.csv_list:
@@ -32,6 +47,9 @@ class Grid:
         return max - min + 1
     
     def get_y_range(self) -> int:
+        """
+        Returns the range of y values
+        """
         max = self.csv_list[0][1]
         min = self.csv_list[0][1]
         for line in self.csv_list:
@@ -41,21 +59,33 @@ class Grid:
                 min = line[1]
         return max - min + 1
     
-    def get_x_min(self):
+    def get_increment_x(self) -> int:
+        """
+        Returns the value to increment x by when inserting into the grid
+        so the smallest x value is at 0
+        """
         min = self.csv_list[0][0]
         for line in self.csv_list:
             if line[0] < min:
                 min = line[0]
-        return min
+        return 0 if min >= 0 else min * -1
     
-    def get_y_min(self):
+    def get_increment_y(self) -> int:
+        """
+        Returns the value to increment y by when inserting into the grid
+        so the smallest y value is at 0
+        """
         min = self.csv_list[0][1]
         for line in self.csv_list:
             if line[1] < min:
                 min = line[1]
-        return min
+        return 0 if min >= 0 else min * -1
     
     def initialise_empty_grid(self) -> list:
+        """
+        Returns a default array of arrays containing None with the
+        grid's height and width corresponding to the x and y ranges
+        """
         arr = []
         x_range = self.get_x_range()
         y_range = self.get_y_range()
@@ -63,37 +93,50 @@ class Grid:
         for y_value in range(y_range):
             sub_arr = []
             for x_value in range(x_range):
-                sub_arr.append(Grid.CHAR_DICT[0])
+                sub_arr.append(None)
             arr.append(sub_arr)
         
         return arr
 
-    def csv_to_grid(self):
+    def csv_to_grid(self) -> None:
+        """
+        Initializes the values in the grid with Tile objects
+        """
         for line in self.csv_list:
-            self.grid_list[(line[1] + self.increment_y) * -1 - 1][line[0] + self.increment_x] = Grid.CHAR_DICT[line[2]]
+            if line[2] == 0:
+                self.grid_list[(line[1] + self.increment_y) * -1 - 1][line[0] + self.increment_x] = NormalTile(line[0], line[1])
+            elif line[2] == 1:
+                self.grid_list[(line[1] + self.increment_y) * -1 - 1][line[0] + self.increment_x] = ObstacleTile(line[0], line[1])
+            elif line[2] == 2:
+                self.grid_list[(line[1] + self.increment_y) * -1 - 1][line[0] + self.increment_x] = PickUpTile(line[0], line[1])
+            elif line[2] == 3:
+                self.grid_list[(line[1] + self.increment_y) * -1 - 1][line[0] + self.increment_x] = DropOffTile(line[0], line[1])
+            elif line[2] == 4:
+                self.grid_list[(line[1] + self.increment_y) * -1 - 1][line[0] + self.increment_x] = SpawningTile(line[0], line[1])
+            else:
+                raise ValueError("Invalid tile type")
     
-    def display_grid(self):
+    def display_grid(self) -> None:
+        """
+        Displays the grid
+        """
         for line in self.grid_list:
-            for char in line:
-                print(char, end="")
+            for tile in line:
+                if tile is None:
+                    print(" ", end="")
+                else:
+                    print(tile.TILE_TYPE.value, end="")
             print()
-    
-    ##### GUIDE #####
-    """
-        0 -> .
-        1 -> _
-        2 -> ^
-        3 -> #
-        4 -> +
-    """
 
 if __name__ == '__main__':
-    grid = Grid('test.csv')
 
-    assert grid.get_x_range() == 10
-    assert grid.get_y_range() == 8
-    assert grid.x_min == -5
-    assert grid.y_min == -4
+    # <======== TESTS ========>
+    print("Test 1")
+    grid1 = Grid('test_file_1.csv')
+    grid1.display_grid()
 
-    grid.csv_to_grid()
-    grid.display_grid()
+    print()
+
+    print("Test 2")
+    grid2 = Grid('test_file_2.csv')
+    grid2.display_grid()
