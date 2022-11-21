@@ -140,3 +140,9 @@ if __name__ == '__main__':
     print("Test 2")
     grid2 = Grid('test_file_2.csv')
     grid2.display_grid()
+
+    print()
+
+    print("Test 3")
+    grid3 = Grid('video_example.csv')
+    grid3.display_grid()
