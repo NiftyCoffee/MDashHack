@@ -115,7 +115,76 @@ class Grid:
                 self.grid_list[(line[1] + self.increment_y) * -1 - 1][line[0] + self.increment_x] = SpawningTile(line[0], line[1])
             else:
                 raise ValueError("Invalid tile type")
+        
+        # add exits for each tile
+        self.set_exits()
     
+    def set_exits(self) -> None:
+        """
+        Initializes the exits of each tile
+        """
+        # first row
+        for col_num in range(len(self.grid_list[0])):
+            if self.grid_list[0][col_num] is not None:
+                if col_num == 0:
+                    self.grid_list[0][col_num].add_exit(self.grid_list[0][col_num + 1])
+                    self.grid_list[0][col_num].add_exit(self.grid_list[1][col_num + 1])
+                    self.grid_list[0][col_num].add_exit(self.grid_list[1][col_num])
+                elif col_num == len(self.grid_list[0]) - 1:
+                    self.grid_list[0][col_num].add_exit(self.grid_list[1][col_num])
+                    self.grid_list[0][col_num].add_exit(self.grid_list[1][col_num - 1])
+                    self.grid_list[0][col_num].add_exit(self.grid_list[0][col_num - 1])
+                else:
+                    self.grid_list[0][col_num].add_exit(self.grid_list[0][col_num + 1])
+                    self.grid_list[0][col_num].add_exit(self.grid_list[1][col_num + 1])
+                    self.grid_list[0][col_num].add_exit(self.grid_list[1][col_num])
+                    self.grid_list[0][col_num].add_exit(self.grid_list[1][col_num - 1])
+                    self.grid_list[0][col_num].add_exit(self.grid_list[0][col_num - 1])
+
+        # second row - second-last row
+        for row_num in range(1,len(self.grid_list) - 1):
+            for col_num in range(len(self.grid_list[row_num])):
+                if self.grid_list[row_num][col_num] is not None:
+                    if col_num == 0:
+                        self.grid_list[row_num][col_num].add_exit(self.grid_list[row_num - 1][col_num])
+                        self.grid_list[row_num][col_num].add_exit(self.grid_list[row_num - 1][col_num + 1])
+                        self.grid_list[row_num][col_num].add_exit(self.grid_list[row_num][col_num + 1])
+                        self.grid_list[row_num][col_num].add_exit(self.grid_list[row_num + 1][col_num + 1])
+                        self.grid_list[row_num][col_num].add_exit(self.grid_list[row_num + 1][col_num])
+                    elif col_num == len(self.grid_list[row_num]) - 1:
+                        self.grid_list[row_num][col_num].add_exit(self.grid_list[row_num - 1][col_num])
+                        self.grid_list[row_num][col_num].add_exit(self.grid_list[row_num + 1][col_num])
+                        self.grid_list[row_num][col_num].add_exit(self.grid_list[row_num + 1][col_num - 1])
+                        self.grid_list[row_num][col_num].add_exit(self.grid_list[row_num][col_num - 1])
+                        self.grid_list[row_num][col_num].add_exit(self.grid_list[row_num - 1][col_num - 1])
+                    else:
+                        self.grid_list[row_num][col_num].add_exit(self.grid_list[row_num - 1][col_num])
+                        self.grid_list[row_num][col_num].add_exit(self.grid_list[row_num - 1][col_num + 1])
+                        self.grid_list[row_num][col_num].add_exit(self.grid_list[row_num][col_num + 1])
+                        self.grid_list[row_num][col_num].add_exit(self.grid_list[row_num + 1][col_num + 1])
+                        self.grid_list[row_num][col_num].add_exit(self.grid_list[row_num + 1][col_num])
+                        self.grid_list[row_num][col_num].add_exit(self.grid_list[row_num + 1][col_num - 1])
+                        self.grid_list[row_num][col_num].add_exit(self.grid_list[row_num][col_num - 1])
+                        self.grid_list[row_num][col_num].add_exit(self.grid_list[row_num - 1][col_num - 1])
+        
+        # last row
+        for col_num in range(len(self.grid_list[-1])):
+            if self.grid_list[-1][col_num] is not None:
+                if col_num == 0:
+                    self.grid_list[-1][col_num].add_exit(self.grid_list[-1 - 1][col_num])
+                    self.grid_list[-1][col_num].add_exit(self.grid_list[-1 - 1][col_num + 1])
+                    self.grid_list[-1][col_num].add_exit(self.grid_list[-1][col_num + 1])
+                elif col_num == len(self.grid_list[-1]) - 1:
+                    self.grid_list[-1][col_num].add_exit(self.grid_list[-1][col_num - 1])
+                    self.grid_list[-1][col_num].add_exit(self.grid_list[-1 - 1][col_num - 1])
+                    self.grid_list[-1][col_num].add_exit(self.grid_list[-1 - 1][col_num])
+                else:
+                    self.grid_list[-1][col_num].add_exit(self.grid_list[-1 - 1][col_num])
+                    self.grid_list[-1][col_num].add_exit(self.grid_list[-1 - 1][col_num + 1])
+                    self.grid_list[-1][col_num].add_exit(self.grid_list[-1][col_num + 1])
+                    self.grid_list[-1][col_num].add_exit(self.grid_list[-1][col_num - 1])
+                    self.grid_list[-1][col_num].add_exit(self.grid_list[-1 - 1][col_num - 1])
+
     def display_grid(self) -> None:
         """
         Displays the grid
@@ -125,7 +194,7 @@ class Grid:
                 if tile is None:
                     print(" ", end="")
                 else:
-                    print(tile.TILE_TYPE.value, end="")
+                    print(tile.get_display_char(), end="")
             print()
 
 if __name__ == '__main__':
