@@ -8,8 +8,7 @@ class Package:
 
     DEFAULT_CHAR = 'P'
 
-    def __init__(self, current_tile):
-        self.current_tile = current_tile
+    def __init__(self):
         self.display_char = Package.DEFAULT_CHAR
     
     def get_display_char(self) -> str:
