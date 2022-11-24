@@ -18,6 +18,9 @@ class Grid:
         self.increment_x = self.get_increment_x()
         self.increment_y = self.get_increment_y()
         self.grid_list = self.initialise_empty_grid()
+        self.spawning_tiles = []
+        self.pick_up_tiles = []
+        self.drop_off_tiles = []
 
         # Convert csv to grid
         self.csv_to_grid()
@@ -104,17 +107,21 @@ class Grid:
         """
         for line in self.csv_list:
             if line[2] == 0:
-                self.grid_list[(line[1] + self.increment_y) * -1 - 1][line[0] + self.increment_x] = NormalTile(line[0], line[1])
+                new_tile = NormalTile(line[0], line[1])
             elif line[2] == 1:
-                self.grid_list[(line[1] + self.increment_y) * -1 - 1][line[0] + self.increment_x] = ObstacleTile(line[0], line[1])
+                new_tile = ObstacleTile(line[0], line[1])
             elif line[2] == 2:
-                self.grid_list[(line[1] + self.increment_y) * -1 - 1][line[0] + self.increment_x] = PickUpTile(line[0], line[1])
+                new_tile = PickUpTile(line[0], line[1])
+                self.pick_up_tiles.append(new_tile)
             elif line[2] == 3:
-                self.grid_list[(line[1] + self.increment_y) * -1 - 1][line[0] + self.increment_x] = DropOffTile(line[0], line[1])
+                new_tile = DropOffTile(line[0], line[1])
+                self.drop_off_tiles.append(new_tile)
             elif line[2] == 4:
-                self.grid_list[(line[1] + self.increment_y) * -1 - 1][line[0] + self.increment_x] = SpawningTile(line[0], line[1])
+                new_tile = SpawningTile(line[0], line[1])
+                self.spawning_tiles.append(new_tile)
             else:
                 raise ValueError("Invalid tile type")
+            self.grid_list[(line[1] + self.increment_y) * -1 - 1][line[0] + self.increment_x] = new_tile
         
         # add exits for each tile
         self.set_exits()

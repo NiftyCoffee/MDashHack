@@ -35,8 +35,14 @@ class Tile(ABC):
     def get_occupant(self):
         return self.occupant
 
-    def set_occupant(self, occupant):
-        self.occupant = occupant
+    def set_occupant(self, occupant) -> bool:
+        """
+        Returns true if successfully set; false otherwise
+        """
+        if not self.has_occupant():
+            self.occupant = occupant
+            return True
+        return False
     
     def remove_occupant(self):
         self.occupant = None
@@ -72,21 +78,41 @@ class PickUpTile(Tile):
         super().__init__(x, y)
         self.tile_type = TileType.PICK_UP
         self.display_char = self.tile_type.value
+        self.package = None
 
-    def spawn_package(self):
-        pass
+    def spawn_package(self, package) -> bool:
+        """
+        Return true if successfully spawned; false otherwise
+        """
+        if self.package is None:
+            self.package = package
+            return True
+        return False
+
+    def get_package(self):
+        return self.package
+
+    def has_package(self):
+        return self.package is not None
+
+    def set_occupant(self, occupant):
+        super().set_occupant(occupant)
+        if self.has_package():
+            self.occupant.pick_up_package(self.get_package())
 
 class DropOffTile(Tile):
     def __init__(self, x: int, y: int):
         super().__init__(x, y)
         self.tile_type = TileType.DROP_OFF
         self.display_char = self.tile_type.value
+        
+    def set_occupant(self, occupant):
+        super().set_occupant(occupant)
+        if self.occupant.holding_package():
+            self.occupant.drop_off_package()
 
 class SpawningTile(Tile):
     def __init__(self, x: int, y: int):
         super().__init__(x, y)
         self.tile_type = TileType.SPAWNING
         self.display_char = self.tile_type.value
-    
-    def spawn_robot(self):
-        pass
