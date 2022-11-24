@@ -25,6 +25,8 @@ class Tile(ABC):
         self.exits = []
 
     def get_display_char(self) -> str:
+        if self.has_occupant():
+            self.display_char = self.get_occupant().get_display_char()
         return self.display_char
 
     def has_occupant(self) -> bool:
@@ -35,7 +37,6 @@ class Tile(ABC):
 
     def set_occupant(self, occupant):
         self.occupant = occupant
-        self.display_char = occupant.character
     
     def remove_occupant(self):
         self.occupant = None
@@ -72,6 +73,9 @@ class PickUpTile(Tile):
         self.tile_type = TileType.PICK_UP
         self.display_char = self.tile_type.value
 
+    def spawn_package(self):
+        pass
+
 class DropOffTile(Tile):
     def __init__(self, x: int, y: int):
         super().__init__(x, y)
@@ -84,5 +88,5 @@ class SpawningTile(Tile):
         self.tile_type = TileType.SPAWNING
         self.display_char = self.tile_type.value
     
-    def spawnRobot(self):
+    def spawn_robot(self):
         pass
