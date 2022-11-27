@@ -222,3 +222,9 @@ if __name__ == '__main__':
     print("Test 3")
     grid3 = Grid('video_example.csv')
     grid3.display_grid()
+
+    print()
+
+    print("Test 4")
+    grid4 = Grid('factory_demo.csv')
+    grid4.display_grid()

@@ -5,13 +5,14 @@ from package import *
 import time
 
 # Setting up the grid
-world_grid = Grid('test_file_1.csv')
-robots_on_grid = []
-num_robots_on_grid = None
 
+csv_file = input("File name: ")
 num_robots = int(input("Number of robots: "))
 num_packages = int(input("Number of packages: "))
 
+world_grid = Grid(csv_file)
+robots_on_grid = []
+num_robots_on_grid = None
 packages_to_deliver = num_packages
 
 # main system loop
@@ -48,6 +49,6 @@ while packages_to_deliver > 0 or num_robots_on_grid != 0:
         else:
             break
     
-    time.sleep(0.2)
+    time.sleep(0.4)
     world_grid.display_grid()
     print()
